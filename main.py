@@ -13,7 +13,8 @@ stub = Stub("nous-hermes-llama2-13b-hf-app")
 @asgi_app()
 def fastapi_app():
     bot = NousHermesLlama213B(
-        model="https://yywfgbg0c2v2cczg.us-east-1.aws.endpoints.huggingface.cloud",
+        endpoint_url="https://yywfgbg0c2v2cczg.us-east-1.aws.endpoints.huggingface.cloud",
+        model_name="NousResearch/Nous-Hermes-Llama2-13b",
         token=os.environ["HF_TOKEN"],
     )
     app = make_app(bot, api_key=os.environ["POE_API_KEY"])
