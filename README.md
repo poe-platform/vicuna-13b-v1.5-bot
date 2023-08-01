@@ -1,5 +1,3 @@
-# Poe API Bot tutorial
+# Nous Hermes Llama 2 13B
 
-This is the companion repository to the Poe API bot
-[quick start](https://developer.poe.com/api-bots/quick-start). Please follow that guide
-for instructions on how to use this repository.
+Available for use at: https://poe.com/Nous-Hermes-L2-13b
