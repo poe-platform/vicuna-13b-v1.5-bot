@@ -1,19 +1,15 @@
-"""
-
-Bot that lets you talk to conversational models available on HuggingFace.
-
-"""
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
-from typing import AsyncIterable, Iterable
+from typing import AsyncIterable
 
+import requests
 from fastapi_poe import PoeBot
 from fastapi_poe.types import QueryRequest
-from huggingface_hub import AsyncInferenceClient
 from sse_starlette.sse import ServerSentEvent
-from transformers import AutoTokenizer
 
+BASE_URL = "https://api.together.xyz/inference"
 DEFAULT_SYSTEM_PROMPT = """\
 You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while \
 being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, \
@@ -24,67 +20,45 @@ If a question does not make any sense, or is not factually coherent, explain why
 answering something not correct. If you don't know the answer to a question, please don't \
 share false information."""
 
-# max input plus output tokens need to be <1512 due to an arbitrary limitation by
-MAX_OUTPUT_TOKENS = 512
-MAX_INPUT_TOKENS = 1000
-
 
 @dataclass
 class NousHermesLlama213B(PoeBot):
-    endpoint_url: str
-    model_name: str
-    token: str
-
-    def __post_init__(self) -> None:
-        self.client = AsyncInferenceClient(model=self.endpoint_url, token=self.token)
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-
-    def get_token_count(self, input_string):
-        encoded_input = self.tokenizer.encode(input_string)
-        return len(encoded_input)
+    TOGETHER_API_KEY: str  # Together.ai api key
 
     def construct_prompt(self, query: QueryRequest):
-        remaining_input_tokens = MAX_INPUT_TOKENS
         prompt = f"### Instruction: {DEFAULT_SYSTEM_PROMPT}\n\n"
-        remaining_input_tokens -= self.get_token_count(prompt)
-        response_segment = "### Response:"
-        remaining_input_tokens -= self.get_token_count(response_segment)
-        assert (
-            remaining_input_tokens > 0
-        ), "no tokens available after consuming instructions text"
-
-        message_contents_reversed = []
-        for message in reversed(query.query):
-            value = None
+        for message in query.query:
             if message.role == "user":
-                value = f"### Input: {message.content}\n\n"
+                prompt += f"### Input: {message.content}\n\n"
             elif message.role == "bot":
-                value = f"### Response: {message.content}\n\n"
+                prompt += f"### Response: {message.content}\n\n"
             else:
                 raise ValueError(f"unknown role {message.role}.")
-
-            tokens_used_by_value = self.get_token_count(value)
-            if tokens_used_by_value > remaining_input_tokens:
-                break
-            else:
-                message_contents_reversed.append(value)
-                remaining_input_tokens -= tokens_used_by_value
-
-        prompt += "".join(reversed(message_contents_reversed))
-        prompt += response_segment
+        prompt += "### Response:"
         return prompt
 
-    async def query_hf_model(self, prompt) -> Iterable[str]:
-        async for token in await self.client.text_generation(
-            prompt,
-            stream=True,
-            max_new_tokens=MAX_OUTPUT_TOKENS,
-            stop_sequences=["</s>"],
-        ):
-            yield token
+    async def query_together_ai(self, prompt) -> str:
+        payload = {
+            "model": "NousResearch/Nous-Hermes-Llama2-13b",
+            "prompt": prompt,
+            "max_tokens": 1000,
+            "stop": ["</s>"],
+            "stream_tokens": True,
+        }
+        headers = {
+            "accept": "application/json",
+            "content-type": "application/json",
+            "Authorization": f"Bearer {self.TOGETHER_API_KEY}",
+        }
+
+        with requests.post(BASE_URL, json=payload, headers=headers) as r:
+            for line in r.iter_lines(decode_unicode=True):
+                if line.startswith("data: "):
+                    line = line[6:]
+                if line and line != "[DONE]":
+                    yield json.loads(line)["choices"][0]["text"]
 
     async def get_response(self, query: QueryRequest) -> AsyncIterable[ServerSentEvent]:
         prompt = self.construct_prompt(query)
-        async for token in self.query_hf_model(prompt):
-            if not token.endswith("</s>"):
-                yield self.text_event(token)
+        async for word in self.query_together_ai(prompt):
+            yield self.text_event(word)
