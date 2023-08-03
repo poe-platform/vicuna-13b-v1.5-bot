@@ -6,7 +6,7 @@ from modal import Image, Secret, Stub, asgi_app
 from nous_hermes_llama2_13b import NousHermesLlama213B
 
 image = Image.debian_slim().pip_install_from_requirements("requirements.txt")
-stub = Stub("nous-hermes-llama2-13b-hf-app")
+stub = Stub("nous-hermes-llama2-13b-app")
 
 
 @stub.function(image=image, secret=Secret.from_name("nous-hermes-l2-13b-secret"))

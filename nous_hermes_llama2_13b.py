@@ -56,7 +56,8 @@ class NousHermesLlama213B(PoeBot):
                 if line.startswith("data: "):
                     line = line[6:]
                 if line and line != "[DONE]":
-                    yield json.loads(line)["choices"][0]["text"]
+                    token = json.loads(line)["choices"][0]["text"]
+                    yield token
 
     async def get_response(self, query: QueryRequest) -> AsyncIterable[ServerSentEvent]:
         prompt = self.construct_prompt(query)
