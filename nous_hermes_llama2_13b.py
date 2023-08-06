@@ -32,6 +32,8 @@ class NousHermesLlama213B(PoeBot):
                 prompt += f"### Input: {message.content}\n\n"
             elif message.role == "bot":
                 prompt += f"### Response: {message.content}\n\n"
+            elif message.role == "system":
+                pass
             else:
                 raise ValueError(f"unknown role {message.role}.")
         prompt += "### Response:"
