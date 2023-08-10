@@ -27,17 +27,19 @@ class NousHermesLlama213B(PoeBot):
     TOGETHER_API_KEY: str  # Together.ai api key
 
     def construct_prompt(self, query: QueryRequest):
-        prompt = f"### Instruction: {DEFAULT_SYSTEM_PROMPT}\n\n"
+        prompt = "\n"
+        # insert system prompt
+        prompt += f"<system>: {DEFAULT_SYSTEM_PROMPT}\n"
         for message in query.query:
             if message.role == "user":
-                prompt += f"### Input: {message.content}\n\n"
+                prompt += f"<human>: {message.content}\n"
             elif message.role == "bot":
-                prompt += f"### Response: {message.content}\n\n"
+                prompt += f"<bot>: {message.content}\n"
             elif message.role == "system":
                 pass
             else:
                 raise ValueError(f"unknown role {message.role}.")
-        prompt += "### Response:"
+        prompt += "<bot>:"
         return prompt
 
     async def query_together_ai(self, prompt) -> str:
