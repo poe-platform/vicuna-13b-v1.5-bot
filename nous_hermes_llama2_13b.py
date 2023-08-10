@@ -4,7 +4,8 @@ import json
 from dataclasses import dataclass
 from typing import AsyncIterable
 
-import requests
+import httpx
+import httpx_sse
 from fastapi_poe import PoeBot
 from fastapi_poe.types import QueryRequest
 from sse_starlette.sse import ServerSentEvent
@@ -53,13 +54,14 @@ class NousHermesLlama213B(PoeBot):
             "Authorization": f"Bearer {self.TOGETHER_API_KEY}",
         }
 
-        with requests.post(BASE_URL, json=payload, headers=headers) as r:
-            for line in r.iter_lines(decode_unicode=True):
-                if line.startswith("data: "):
-                    line = line[6:]
-                if line and line != "[DONE]":
-                    token = json.loads(line)["choices"][0]["text"]
-                    yield token
+        async with httpx.AsyncClient() as aclient:
+            async with httpx_sse.aconnect_sse(
+                aclient, "POST", BASE_URL, headers=headers, json=payload
+            ) as event_source:
+                async for event in event_source.aiter_sse():
+                    if event.data != "[DONE]":
+                        token = json.loads(event.data)["choices"][0]["text"]
+                        yield token
 
     async def get_response(self, query: QueryRequest) -> AsyncIterable[ServerSentEvent]:
         prompt = self.construct_prompt(query)
