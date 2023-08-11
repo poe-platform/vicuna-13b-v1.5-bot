@@ -44,7 +44,7 @@ class Vicuna13BV13(PoeBot):
 
     async def query_together_ai(self, prompt) -> str:
         payload = {
-            "model": "lmsys/vicuna-13b-delta-v1.3",
+            "model": "lmsys/vicuna-13b-v1.3",
             "prompt": prompt,
             "max_tokens": 1000,
             "stop": ["</s>", "<human>:"],
