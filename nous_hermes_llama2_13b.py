@@ -28,7 +28,6 @@ class NousHermesLlama213B(PoeBot):
 
     def construct_prompt(self, query: QueryRequest):
         prompt = "\n"
-        # insert system prompt
         prompt += f"<system>: {DEFAULT_SYSTEM_PROMPT}\n"
         for message in query.query:
             if message.role == "user":
@@ -47,7 +46,7 @@ class NousHermesLlama213B(PoeBot):
             "model": "NousResearch/Nous-Hermes-Llama2-13b",
             "prompt": prompt,
             "max_tokens": 1000,
-            "stop": ["</s>"],
+            "stop": ["</s>", "<human>:"],
             "stream_tokens": True,
         }
         headers = {
