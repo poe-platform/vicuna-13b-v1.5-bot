@@ -1,3 +1,3 @@
-# Nous Hermes Llama 2 13B
+# Vicuna 13B V1.3
 
-Available for use at: https://poe.com/Nous-Hermes-L2-13b
+Available for use at: https://poe.com/Vicuna-13B-V13

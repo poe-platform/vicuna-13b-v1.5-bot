@@ -23,7 +23,7 @@ share false information."""
 
 
 @dataclass
-class NousHermesLlama213B(PoeBot):
+class Vicuna13BV13(PoeBot):
     TOGETHER_API_KEY: str  # Together.ai api key
 
     def construct_prompt(self, query: QueryRequest):
@@ -44,7 +44,7 @@ class NousHermesLlama213B(PoeBot):
 
     async def query_together_ai(self, prompt) -> str:
         payload = {
-            "model": "NousResearch/Nous-Hermes-Llama2-13b",
+            "model": "lmsys/vicuna-13b-delta-v1.3",
             "prompt": prompt,
             "max_tokens": 1000,
             "stop": ["</s>", "<human>:"],
@@ -52,7 +52,7 @@ class NousHermesLlama213B(PoeBot):
             "temperature": 0.7,
             "top_p": 0.7,
             "top_k": 50,
-            "repetition_penalty": 1
+            "repetition_penalty": 1,
         }
         headers = {
             "accept": "application/json",
