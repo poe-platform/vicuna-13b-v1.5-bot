@@ -29,7 +29,7 @@ class Vicuna13BV13(PoeBot):
     def construct_prompt(self, query: QueryRequest):
         prompt = "\n"
         # remove system prompt for now.
-        # prompt += f"<system>: {DEFAULT_SYSTEM_PROMPT}\n"
+        prompt += f"<system>: {DEFAULT_SYSTEM_PROMPT}\n"
         for message in query.query:
             if message.role == "user":
                 prompt += f"<human>: {message.content}\n"
