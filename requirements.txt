@@ -1,4 +1,2 @@
 fastapi-poe==0.0.14
-huggingface-hub==0.16.4
-transformers==4.31.0
 httpx-sse==0.3.1
