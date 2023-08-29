@@ -1,2 +1,2 @@
-fastapi-poe==0.0.14
+fastapi-poe==0.0.17
 httpx-sse==0.3.1

@@ -13,5 +13,5 @@ stub = Stub("vicuna-13b-v1.3-app")
 @asgi_app()
 def fastapi_app():
     bot = Vicuna13BV13(TOGETHER_API_KEY=os.environ["TOGETHER_API_KEY"])
-    app = make_app(bot, api_key=os.environ["POE_API_KEY"])
+    app = make_app(bot, access_key=os.environ["POE_ACCESS_KEY"])
     return app

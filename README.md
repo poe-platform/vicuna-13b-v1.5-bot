@@ -1,8 +1,14 @@
-Source code for the bot hosted at: https://poe.com/Vicuna-13B-V13
+# Vicuna 13B V1.3 Bot
 
-This is an an implementation of Vicuna-13b-v1.3 using the
-[Poe-Protocol](https://developer.poe.com/api-bots/poe-protocol-specification). In order
-to run this yourself, [setup modal](https://modal.com/docs/guide#getting-started), setup
-a secret on modal.com with your Poe security key and your Together API Key, rename the
-secret in main.py and then run `modal serve main.py`. The command will deploy this app
-and output a url. Use that url to create a poe bot at: https://poe.com/create_bot?api=1
+Chatbot powered by the Vicuna-13B-V1.3 model.
+
+## How do I run this myself?
+
+- Refer to the quick start for general instructions on how to create server bots and
+  deploy them on modal.com
+- In Modal, create a secret named `vicuna-13b-v1.3-secret` containing both your
+  `TOGETHER_API_KEY` (obtainable by signing up at together.ai) and the `POE_ACCESS_KEY`
+  you wish to use.
+- Run `modal serve main.py`
+- Create a bot on [poe.com](https://poe.com/create_bot?server=1) and provide your server
+  url and access key.
