@@ -1,12 +1,12 @@
-# Vicuna 13B V1.3 Bot
+# Vicuna 13B V1.5 Bot
 
-Chatbot powered by the Vicuna-13B-V1.3 model.
+Chatbot powered by the Vicuna-13B-V1.5 model.
 
 ## How do I run this myself?
 
 - Refer to the quick start for general instructions on how to create server bots and
   deploy them on modal.com
-- In Modal, create a secret named `vicuna-13b-v1.3-secret` containing both your
+- In Modal, create a secret named `vicuna-13b-v1.5-secret` containing both your
   `TOGETHER_API_KEY` (obtainable by signing up at together.ai) and the `POE_ACCESS_KEY`
   you wish to use.
 - Run `modal serve main.py`

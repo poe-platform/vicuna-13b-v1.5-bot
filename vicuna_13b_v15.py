@@ -21,7 +21,7 @@ ASSISTANT: My name is VicunaBot and I am programmed to be helpful, polite, hones
 
 
 @dataclass
-class Vicuna13BV13(PoeBot):
+class Vicuna13BV15(PoeBot):
     TOGETHER_API_KEY: str  # Together.ai api key
 
     def construct_prompt(self, query: QueryRequest):
